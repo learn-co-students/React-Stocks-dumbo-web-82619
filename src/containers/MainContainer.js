@@ -7,7 +7,8 @@ class MainContainer extends Component {
 
   state ={
     stocks: [],
-    port: []
+    port: [],
+    fiterTerm: 'All'
   }
 
 
@@ -16,7 +17,7 @@ class MainContainer extends Component {
     fetch("http://localhost:3000/stocks")
     .then(r => r.json())
     .then(data => {
-      // console.log(data)
+      console.log(data)
       this.setState({ 
         stocks: data
       })
@@ -40,15 +41,33 @@ class MainContainer extends Component {
     })
   }
 
+  setFilterTerm = (term) => {
+    this.setState({
+      fiterTerm: term
+    })
+  }
+
+  whichStocksToRender = () => {
+    if(this.state.fiterTerm === "All"){
+    return this.state.stocks
+  } else {
+    return this.state.stocks.filter(stock => stock.type === this.state.fiterTerm)
+  }
+  }
+  
+  
+
   render() {
     return (
       <div>
-        <SearchBar/>
+        <SearchBar term={this.state.fiterTerm} 
+        setFilterTerm={this.setFilterTerm}
+        />
 
           <div className="row">
             <div className="col-8">
 
-              <StockContainer addPort ={this.handleClick} stocks={this.state.stocks}/>
+              <StockContainer addPort ={this.handleClick} stocks={this.whichStocksToRender()}/>
 
             </div>
             <div className="col-4">
